@@ -9,7 +9,7 @@ pygame.init()
 width = 1000
 height = 800
 window = pygame.display.set_mode((width, height))
-pygame.display.set_caption("Your Game Title")
+pygame.display.set_caption("NISHATTACK")
 
 # Load the player image and scale it
 player_image_original = pygame.image.load("nishtha.png")
@@ -31,29 +31,22 @@ for i in range(5):
     enemy_images.append(enemy_image)
     # Generate multiple instances of each enemy with initial positions only at the edges
     for _ in range(1):  # Adjust the number of instances as needed
-        random_side = random.choice(["left", "right", "top", "bottom"])
-        if (i==1):
-            random_side="top"
-        elif (i==2):
-            random_side="right"
+        random_side = random.choice(["left", "right", "top"])  # Restrict to top, left, or right
         if random_side == "left":
             initial_x = 0 - new_width
             initial_y = random.randint(0, height - new_height)
         elif random_side == "right":
             initial_x = width
             initial_y = random.randint(0, height - new_height)
-        elif random_side == "top":
+        else:  # top
             initial_x = random.randint(0, width - new_width)
             initial_y = 0 - new_height
-        else:  # bottom
-            initial_x = random.randint(0, width - new_width)
-            initial_y = height
         enemy_rect = pygame.Rect(initial_x, initial_y, new_width, new_height)
-        direction = random.choice(["left", "right", "up", "down"])
-        if (i==1):
-            direction="down"
-        elif (i==2):
-            direction="left"
+        direction = random.choice(["left", "right", "down"])  # Adjusted directions
+        if random_side == "left":
+            direction = "right"
+        elif random_side == "right":
+            direction = "left"
         enemy_instances.append((enemy_image, enemy_rect, direction))
 
 # Define enemy speed
@@ -61,6 +54,55 @@ enemy_speed = 1
 
 # Variable to track if player image is flipped
 player_flipped = False
+
+# Game over screen function
+def game_over_screen():
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RETURN:
+                    return True  # Restart the game
+                elif event.key == pygame.K_ESCAPE:
+                    pygame.quit()
+                    sys.exit()  # Quit the game
+        window.fill((0, 0, 0))  # Black background
+        # Display game over text
+        font = pygame.font.Font(None, 64)
+        game_over_text = font.render("Game Over", True, (255, 0, 0))
+        window.blit(game_over_text, ((width - game_over_text.get_width()) // 2, (height - game_over_text.get_height()) // 2))
+        # Display instructions
+        instruction_font = pygame.font.Font(None, 36)
+        instruction_text = instruction_font.render("Press Enter to play again or Escape to quit", True, (255, 255, 255))
+        window.blit(instruction_text, ((width - instruction_text.get_width()) // 2, (height + game_over_text.get_height()) // 2 + 20))
+        pygame.display.flip()
+
+# Reset game state function
+def reset_game_state():
+    global player_rect, enemy_instances
+    player_rect.center = (width // 2, height // 2)
+    enemy_instances = []
+    for i in range(5):
+        for _ in range(1):
+            random_side = random.choice(["left", "right", "top"])
+            if random_side == "left":
+                initial_x = 0 - new_width
+                initial_y = random.randint(0, height - new_height)
+            elif random_side == "right":
+                initial_x = width
+                initial_y = random.randint(0, height - new_height)
+            else:  # top
+                initial_x = random.randint(0, width - new_width)
+                initial_y = 0 - new_height
+            enemy_rect = pygame.Rect(initial_x, initial_y, new_width, new_height)
+            direction = random.choice(["left", "right", "down"])
+            if random_side == "left":
+                direction = "right"
+            elif random_side == "right":
+                direction = "left"
+            enemy_instances.append((enemy_images[i], enemy_rect, direction))
 
 # Main game loop
 running = True
@@ -106,16 +148,22 @@ while running:
         if not window.get_rect().colliderect(enemy_rect):
             enemy_instances.remove((enemy_image, enemy_rect, direction))
             # Re-add enemy with initial position at the edge and fixed direction if it goes off-screen
-            random_side = random.choice(["left", "right", "top", "bottom"])
+            random_side = random.choice(["left", "right", "top"])
             if random_side == "left":
                 enemy_rect.topleft = (0 - enemy_rect.width, random.randint(0, height - enemy_rect.height))
+                enemy_instances.append((enemy_image, enemy_rect, "right"))
             elif random_side == "right":
                 enemy_rect.topleft = (width, random.randint(0, height - enemy_rect.height))
-            elif random_side == "top":
+                enemy_instances.append((enemy_image, enemy_rect, "left"))
+            else:  # top
                 enemy_rect.topleft = (random.randint(0, width - enemy_rect.width), 0 - enemy_rect.height)
-            else:  # bottom
-                enemy_rect.topleft = (random.randint(0, width - enemy_rect.width), height)
-            enemy_instances.append((enemy_image, enemy_rect, direction))
+                enemy_instances.append((enemy_image, enemy_rect, "down"))
+    
+    # Check for collisions between player and enemies
+    for enemy_image, enemy_rect, _ in enemy_instances:
+        if player_rect.colliderect(enemy_rect):
+            game_over_screen()  # Display game over screen if collision occurs
+            reset_game_state()  # Reset game state after game over
     
     # Render objects
     window.fill((255, 255, 255))  # White background
