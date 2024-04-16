@@ -14,7 +14,9 @@ pygame.display.set_caption("NISHATTACK")
 
 # Load the player image and scale it
 player_image_original = pygame.image.load("imgs/nishtha.png")
-player_image_original = pygame.transform.scale(player_image_original, (100, 100))  # Scale to desired size
+aspect_ratio = player_image_original.get_width() / player_image_original.get_height()
+img_width = 70
+player_image_original = pygame.transform.scale(player_image_original, (img_width, int(img_width / aspect_ratio)))  # Scale to desired size
 player_rect = player_image_original.get_rect()
 player_rect.center = (width // 2, height // 2)
 player_speed = 1
@@ -28,7 +30,9 @@ for i in range(5):
     aspect_ratio = enemy_image.get_width() / enemy_image.get_height()
     new_width = 75  # Adjust the desired width
     if (i==2):
-        new_width = 150
+        new_width = 200
+    elif(i==3):
+        new_width = 100
     elif (i==4):
         new_width = 150
     new_height = int(new_width / aspect_ratio)
@@ -67,7 +71,9 @@ start_time = time.time()
 def game_over_screen(enemy_image, elapsed_time):
     # Load the Nishtha image and scale it
     end_image = pygame.image.load("imgs/nishtha.png")
-    end_image = pygame.transform.scale(end_image, (200, 200))
+    aspect_ratio = end_image.get_width() / end_image.get_height()
+    img_width = 150
+    end_image = pygame.transform.scale(end_image, (img_width, int(img_width / aspect_ratio)))  # Scale to desired size
 
     # Display collision image
     ew_image = enemy_image
