@@ -6,8 +6,8 @@ import random
 pygame.init()
 
 # Set up the game window
-width = 1000
-height = 800
+width = 1800
+height = 900
 window = pygame.display.set_mode((width, height))
 pygame.display.set_caption("NISHATTACK")
 
@@ -26,11 +26,15 @@ for i in range(5):
     # Calculate width and height while maintaining the aspect ratio
     aspect_ratio = enemy_image.get_width() / enemy_image.get_height()
     new_width = 75  # Adjust the desired width
+    if (i==2):
+        new_width = 150
+    elif (i==4):
+        new_width = 150
     new_height = int(new_width / aspect_ratio)
     enemy_image = pygame.transform.scale(enemy_image, (new_width, new_height))
     enemy_images.append(enemy_image)
     # Generate multiple instances of each enemy with initial positions only at the edges
-    for _ in range(1):  # Adjust the number of instances as needed
+    for _ in range(2):  # Adjust the number of instances as needed
         random_side = random.choice(["left", "right", "top"])  # Restrict to top, left, or right
         if random_side == "left":
             initial_x = 0 - new_width
@@ -91,7 +95,7 @@ def reset_game_state():
     player_rect.center = (width // 2, height // 2)
     enemy_instances = []
     for i in range(5):
-        for _ in range(1):
+        for _ in range(2):
             random_side = random.choice(["left", "right", "top"])
             if random_side == "left":
                 initial_x = 0 - new_width
