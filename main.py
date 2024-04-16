@@ -149,15 +149,23 @@ def start_screen():
                 elif event.key == pygame.K_ESCAPE:
                     pygame.quit()
                     sys.exit()  # Quit the game
+
         window.fill((0, 0, 0))  # Black background
+
         # Display game title
-        font = pygame.font.Font(None, 100)
+        font = pygame.font.Font(None, 200)
         title_text = font.render("NISHATTACK", True, (255, 140, 0))
-        window.blit(title_text, ((width - title_text.get_width()) // 2, (height - title_text.get_height()) // 2 - 100))
+        window.blit(title_text, ((width - title_text.get_width()) // 2, (height - title_text.get_height()) // 2 - 50))
+        
+        # Display intro
+        intro_font = pygame.font.Font(None, 50)
+        intro_text = intro_font.render("KEEP NISHTHA AWAY FROM WHAT SHE HATES!", True, (0, 150, 255))
+        window.blit(intro_text, ((width - intro_text.get_width()) // 2, (height + title_text.get_height()) // 2))
+        
         # Display instructions
         instruction_font = pygame.font.Font(None, 36)
-        instruction_text = instruction_font.render("Press Enter to play", True, (255, 255, 255))
-        window.blit(instruction_text, ((width - instruction_text.get_width()) // 2, (height + title_text.get_height()) // 2 + 20))
+        instruction_text = instruction_font.render("Use arrow keys to move, Press Enter to play", True, (255, 255, 255))
+        window.blit(instruction_text, ((width - instruction_text.get_width()) // 2, (height + title_text.get_height()) // 2 + 50))
         pygame.display.flip()
 
 # Main game loop
