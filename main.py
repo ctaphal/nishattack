@@ -1,6 +1,7 @@
 import pygame
 import sys
 import random
+import time
 
 # Initialize Pygame
 pygame.init()
@@ -59,11 +60,21 @@ enemy_speed = 1
 # Variable to track if player image is flipped
 player_flipped = False
 
+# Set start time
+start_time = time.time()
+
 # Game over screen function
-def game_over_screen():
-    # Load the puke image and scale it
+def game_over_screen(enemy_image, elapsed_time):
+    # Load the Nishtha image and scale it
     end_image = pygame.image.load("imgs/nishtha.png")
     end_image = pygame.transform.scale(end_image, (200, 200))
+
+    # Display collision image
+    ew_image = enemy_image
+    aspect_ratio = ew_image.get_width() / ew_image.get_height()
+    new_width = 200
+    new_height = int(new_width / aspect_ratio)
+    ew_image = pygame.transform.scale(ew_image, (new_width, new_height))
 
     while True:
         for event in pygame.event.get():
@@ -77,16 +88,21 @@ def game_over_screen():
                     pygame.quit()
                     sys.exit()  # Quit the game
         window.fill((0, 0, 0))  # Black background
-        # Display puke image
+        # Display Nishtha and enemy_image that she collided with
         window.blit(end_image, ((width - end_image.get_width()) // 2, (height - end_image.get_height()) // 2 - 100))
+        window.blit(ew_image, ((width - ew_image.get_width()) // 2 - 300, (height - ew_image.get_height()) // 2 - 100))
         # Display game over text
         font = pygame.font.Font(None, 64)
         game_over_text = font.render("EWWWW!!", True, (255, 0, 0))
         window.blit(game_over_text, ((width - game_over_text.get_width()) // 2, (height - game_over_text.get_height()) // 2))
-        # Display instructions
+        # Display score and instructions
+        score_font = pygame.font.Font(None, 32)
+        score_text = font.render("SCORE: {:.0f}".format(elapsed_time), True, (255, 255, 255))
+        window.blit(score_text, ((width - score_text.get_width()) // 2, (height + game_over_text.get_height()) // 2 + 20))
+
         instruction_font = pygame.font.Font(None, 36)
         instruction_text = instruction_font.render("Press Enter to play again or Escape to quit", True, (255, 255, 255))
-        window.blit(instruction_text, ((width - instruction_text.get_width()) // 2, (height + game_over_text.get_height()) // 2 + 20))
+        window.blit(instruction_text, ((width - instruction_text.get_width()) // 2, (height + game_over_text.get_height()) // 2 + 100))
         pygame.display.flip()
 
 # Reset game state function
@@ -197,14 +213,44 @@ while running:
     # Check for collisions between player and enemies
     for enemy_image, enemy_rect, _ in enemy_instances:
         if player_rect.colliderect(enemy_rect):
-            game_over_screen()  # Display game over screen if collision occurs
+            game_over_screen(enemy_image, elapsed_time)  # Display game over screen if collision occurs
             reset_game_state()  # Reset game state after game over
+            start_time = time.time()
     
     # Render objects
     window.fill((255, 255, 255))  # White background
     window.blit(player_image_original, player_rect)  # Draw the player onto the window
     for enemy_image, enemy_rect, _ in enemy_instances:
         window.blit(enemy_image, enemy_rect)  # Draw enemies onto the window
+
+    # Calculate elapsed time
+    elapsed_time = time.time() - start_time
+
+    # RENDER THE TEXT
+    font = pygame.font.Font(None, 70)
+    # Render the text with red background
+    text_surface = font.render("TIME: {:.0f}".format(elapsed_time), True, (0, 0, 0))
+    text_rect = text_surface.get_rect()
+    text_rect.topleft = (20, 20)
+
+    # Create a surface for the red background with a border
+    border_width = 4  # Adjust border width as needed
+    background_width = text_rect.width + 2 * border_width
+    background_height = text_rect.height + 2 * border_width
+    background_surface = pygame.Surface((background_width, background_height))
+    background_surface.fill((0, 0, 0))  # Black border color
+    inner_surface = pygame.Surface((text_rect.width, text_rect.height))
+    inner_surface.fill((255, 255, 0))  # Red background color
+    background_surface.blit(inner_surface, (border_width, border_width))
+
+    # Blit the red background onto the main window
+    window.blit(background_surface, text_rect)
+
+    # Blit the text onto the red background
+    window.blit(text_surface, (text_rect.left + border_width, text_rect.top + border_width))
+
+
+
     pygame.display.flip()  # Update the display
 
 # Clean up
