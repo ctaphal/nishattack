@@ -57,6 +57,10 @@ player_flipped = False
 
 # Game over screen function
 def game_over_screen():
+    # Load the puke image and scale it
+    end_image = pygame.image.load("nishtha.png")
+    end_image = pygame.transform.scale(end_image, (200, 200))
+
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -69,9 +73,11 @@ def game_over_screen():
                     pygame.quit()
                     sys.exit()  # Quit the game
         window.fill((0, 0, 0))  # Black background
+        # Display puke image
+        window.blit(end_image, ((width - end_image.get_width()) // 2, (height - end_image.get_height()) // 2 - 100))
         # Display game over text
         font = pygame.font.Font(None, 64)
-        game_over_text = font.render("Game Over", True, (255, 0, 0))
+        game_over_text = font.render("EWWWW!!", True, (255, 0, 0))
         window.blit(game_over_text, ((width - game_over_text.get_width()) // 2, (height - game_over_text.get_height()) // 2))
         # Display instructions
         instruction_font = pygame.font.Font(None, 36)
@@ -104,7 +110,32 @@ def reset_game_state():
                 direction = "left"
             enemy_instances.append((enemy_images[i], enemy_rect, direction))
 
+# Start screen function
+def start_screen():
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RETURN:
+                    return True  # Start the game
+                elif event.key == pygame.K_ESCAPE:
+                    pygame.quit()
+                    sys.exit()  # Quit the game
+        window.fill((0, 0, 0))  # Black background
+        # Display game title
+        font = pygame.font.Font(None, 100)
+        title_text = font.render("NISHATTACK", True, (255, 255, 255))
+        window.blit(title_text, ((width - title_text.get_width()) // 2, (height - title_text.get_height()) // 2 - 100))
+        # Display instructions
+        instruction_font = pygame.font.Font(None, 36)
+        instruction_text = instruction_font.render("Press Enter to play", True, (255, 255, 255))
+        window.blit(instruction_text, ((width - instruction_text.get_width()) // 2, (height + title_text.get_height()) // 2 + 20))
+        pygame.display.flip()
+
 # Main game loop
+start_screen()  # Show the start screen before starting the game
 running = True
 while running:
     # Handle events
