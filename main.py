@@ -12,7 +12,7 @@ window = pygame.display.set_mode((width, height))
 pygame.display.set_caption("NISHATTACK")
 
 # Load the player image and scale it
-player_image_original = pygame.image.load("nishtha.png")
+player_image_original = pygame.image.load("imgs/nishtha.png")
 player_image_original = pygame.transform.scale(player_image_original, (100, 100))  # Scale to desired size
 player_rect = player_image_original.get_rect()
 player_rect.center = (width // 2, height // 2)
@@ -22,7 +22,7 @@ player_speed = 1
 enemy_images = []
 enemy_instances = []  # List to hold instances of enemy images
 for i in range(5):
-    enemy_image = pygame.image.load(f"enemy{i + 1}.png")
+    enemy_image = pygame.image.load(f"imgs/enemy{i + 1}.png")
     # Calculate width and height while maintaining the aspect ratio
     aspect_ratio = enemy_image.get_width() / enemy_image.get_height()
     new_width = 75  # Adjust the desired width
@@ -58,7 +58,7 @@ player_flipped = False
 # Game over screen function
 def game_over_screen():
     # Load the puke image and scale it
-    end_image = pygame.image.load("nishtha.png")
+    end_image = pygame.image.load("imgs/nishtha.png")
     end_image = pygame.transform.scale(end_image, (200, 200))
 
     while True:
