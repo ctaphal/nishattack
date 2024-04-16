@@ -152,7 +152,7 @@ def start_screen():
         window.fill((0, 0, 0))  # Black background
         # Display game title
         font = pygame.font.Font(None, 100)
-        title_text = font.render("NISHATTACK", True, (255, 255, 255))
+        title_text = font.render("NISHATTACK", True, (255, 140, 0))
         window.blit(title_text, ((width - title_text.get_width()) // 2, (height - title_text.get_height()) // 2 - 100))
         # Display instructions
         instruction_font = pygame.font.Font(None, 36)
