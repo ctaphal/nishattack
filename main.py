@@ -7,7 +7,7 @@ import time
 pygame.init()
 
 # Set up the game window
-width = 1800
+width = 1600
 height = 900
 window = pygame.display.set_mode((width, height))
 pygame.display.set_caption("NISHATTACK")
