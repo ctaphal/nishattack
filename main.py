@@ -17,9 +17,12 @@ player_image_original = pygame.image.load("imgs/nishtha.png")
 aspect_ratio = player_image_original.get_width() / player_image_original.get_height()
 img_width = 70
 player_image_original = pygame.transform.scale(player_image_original, (img_width, int(img_width / aspect_ratio)))  # Scale to desired size
-player_rect = player_image_original.get_rect()
+player_rect = player_image_original.get_rect(topleft=(0, 0), size=player_image_original.get_size())
 player_rect.center = (width // 2, height // 2)
+
+# Set player speed
 player_speed = 1
+
 
 # Load enemy images and scale them
 enemy_images = []
@@ -28,16 +31,19 @@ for i in range(5):
     enemy_image = pygame.image.load(f"imgs/enemy{i + 1}.png")
     # Calculate width and height while maintaining the aspect ratio
     aspect_ratio = enemy_image.get_width() / enemy_image.get_height()
-    new_width = 75  # Adjust the desired width
+      # Adjust the desired width
     if (i==2):
         new_width = 200
     elif(i==3):
         new_width = 100
     elif (i==4):
         new_width = 150
+    else:
+        new_width = 75
     new_height = int(new_width / aspect_ratio)
     enemy_image = pygame.transform.scale(enemy_image, (new_width, new_height))
     enemy_images.append(enemy_image)
+    # Generate multiple instances of each enemy with initial positions only at the edges
     # Generate multiple instances of each enemy with initial positions only at the edges
     for _ in range(2):  # Adjust the number of instances as needed
         random_side = random.choice(["left", "right", "top"])  # Restrict to top, left, or right
@@ -50,13 +56,15 @@ for i in range(5):
         else:  # top
             initial_x = random.randint(0, width - new_width)
             initial_y = 0 - new_height
-        enemy_rect = pygame.Rect(initial_x, initial_y, new_width, new_height)
+        # Adjust the dimensions of the enemy_rect to be slightly smaller
+        enemy_rect = pygame.Rect(initial_x + 5, initial_y + 5, new_width - 10, new_height - 10)
         direction = random.choice(["left", "right", "down"])  # Adjusted directions
         if random_side == "left":
             direction = "right"
         elif random_side == "right":
             direction = "left"
         enemy_instances.append((enemy_image, enemy_rect, direction))
+
 
 # Define enemy speed
 enemy_speed = 1
@@ -128,7 +136,7 @@ def reset_game_state():
             else:  # top
                 initial_x = random.randint(0, width - new_width)
                 initial_y = 0 - new_height
-            enemy_rect = pygame.Rect(initial_x, initial_y, new_width, new_height)
+            enemy_rect = pygame.Rect(initial_x + 5, initial_y + 5, new_width - 10, new_height - 10)
             direction = random.choice(["left", "right", "down"])
             if random_side == "left":
                 direction = "right"
@@ -226,10 +234,17 @@ while running:
     
     # Check for collisions between player and enemies
     for enemy_image, enemy_rect, _ in enemy_instances:
+        # Adjusted collision detection for enemy2
+        if enemy_image == enemy_images[1]:  # Check if the current enemy is enemy2
+            # Check if player is to the right of enemy2
+            if player_rect.left > enemy_rect.right:
+                continue  # No collision, move to the next enemy
+        # For other enemies and when player is not to the right of enemy2
         if player_rect.colliderect(enemy_rect):
             game_over_screen(enemy_image, elapsed_time)  # Display game over screen if collision occurs
             reset_game_state()  # Reset game state after game over
             start_time = time.time()
+
     
     # Render objects
     window.fill((255, 255, 255))  # White background
