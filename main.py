@@ -167,7 +167,7 @@ def start_screen():
         
         # Display intro
         intro_font = pygame.font.Font(None, 50)
-        intro_text = intro_font.render("KEEP NISHTHA AWAY FROM WHAT SHE HATES!", True, (0, 150, 255))
+        intro_text = intro_font.render("KEEP NISHTHA AWAY FROM THE THINGS SHE HATES!", True, (0, 150, 255))
         window.blit(intro_text, ((width - intro_text.get_width()) // 2, (height + title_text.get_height()) // 2))
         
         # Display instructions
