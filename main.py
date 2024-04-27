@@ -23,7 +23,7 @@ player_rect = player_image_original.get_rect(center=(width // 2, height // 2))
 player_rect.inflate_ip(-2, -2)  # Shrink the player_rect by 10 pixels in both width and height
 
 # Set player speed
-player_speed = 1
+player_speed = 2
 
 
 # Load enemy images and scale them
@@ -34,7 +34,9 @@ for i in range(5):
     # Calculate width and height while maintaining the aspect ratio
     aspect_ratio = enemy_image.get_width() / enemy_image.get_height()
       # Adjust the desired width
-    if (i==2):
+    if (i==0):
+        new_width = 100
+    elif (i==2):
         new_width = 200
     elif(i==3):
         new_width = 130
@@ -47,7 +49,7 @@ for i in range(5):
     enemy_images.append(enemy_image)
     # Generate multiple instances of each enemy with initial positions only at the edges
     # Generate multiple instances of each enemy with initial positions only at the edges
-    for _ in range(2):  # Adjust the number of instances as needed
+    for _ in range(3):  # Adjust the number of instances as needed
         random_side = random.choice(["left", "right", "top"])  # Restrict to top, left, or right
         if random_side == "left":
             initial_x = 0 - new_width
@@ -59,7 +61,7 @@ for i in range(5):
             initial_x = random.randint(0, width - new_width)
             initial_y = 0 - new_height
         # Adjust the dimensions of the enemy_rect to be slightly smaller
-        enemy_rect = pygame.Rect(initial_x + 6, initial_y + 6, new_width - 12, new_height - 12)
+        enemy_rect = pygame.Rect(initial_x + 6.2, initial_y + 6.2, new_width - 12.4, new_height - 12.4)
         direction = random.choice(["left", "right", "down"])  # Adjusted directions
         if random_side == "left":
             direction = "right"
@@ -69,7 +71,7 @@ for i in range(5):
 
 
 # Define enemy speed
-enemy_speed = 1
+enemy_speed = 2
 
 # Variable to track if player image is flipped
 player_flipped = False
@@ -131,7 +133,9 @@ def reset_game_state():
         # Calculate width and height while maintaining the aspect ratio
         aspect_ratio = enemy_image.get_width() / enemy_image.get_height()
         # Adjust the desired width
-        if (i==2):
+        if (i==0):
+            new_width = 100
+        elif (i==2):
             new_width = 200
         elif(i==3):
             new_width = 130
@@ -144,7 +148,7 @@ def reset_game_state():
         enemy_images.append(enemy_image)
         # Generate multiple instances of each enemy with initial positions only at the edges
         # Generate multiple instances of each enemy with initial positions only at the edges
-        for _ in range(2):  # Adjust the number of instances as needed
+        for _ in range(3):  # Adjust the number of instances as needed
             random_side = random.choice(["left", "right", "top"])  # Restrict to top, left, or right
             if random_side == "left":
                 initial_x = 0 - new_width
@@ -156,7 +160,7 @@ def reset_game_state():
                 initial_x = random.randint(0, width - new_width)
                 initial_y = 0 - new_height
             # Adjust the dimensions of the enemy_rect to be slightly smaller
-            enemy_rect = pygame.Rect(initial_x + 6, initial_y + 6, new_width - 12, new_height - 12)
+            enemy_rect = pygame.Rect(initial_x + 6.2, initial_y + 6.2, new_width - 12.4, new_height - 12.4)
             direction = random.choice(["left", "right", "down"])  # Adjusted directions
             if random_side == "left":
                 direction = "right"
