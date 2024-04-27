@@ -17,8 +17,10 @@ player_image_original = pygame.image.load("imgs/nishtha.png")
 aspect_ratio = player_image_original.get_width() / player_image_original.get_height()
 img_width = 70
 player_image_original = pygame.transform.scale(player_image_original, (img_width, int(img_width / aspect_ratio)))  # Scale to desired size
-player_rect = player_image_original.get_rect(topleft=(0, 0), size=player_image_original.get_size())
-player_rect.center = (width // 2, height // 2)
+
+# Create player_rect slightly smaller than player_image
+player_rect = player_image_original.get_rect(center=(width // 2, height // 2))
+player_rect.inflate_ip(-2, -2)  # Shrink the player_rect by 10 pixels in both width and height
 
 # Set player speed
 player_speed = 1
@@ -35,9 +37,9 @@ for i in range(5):
     if (i==2):
         new_width = 200
     elif(i==3):
-        new_width = 100
+        new_width = 130
     elif (i==4):
-        new_width = 150
+        new_width = 170
     else:
         new_width = 75
     new_height = int(new_width / aspect_ratio)
@@ -57,7 +59,7 @@ for i in range(5):
             initial_x = random.randint(0, width - new_width)
             initial_y = 0 - new_height
         # Adjust the dimensions of the enemy_rect to be slightly smaller
-        enemy_rect = pygame.Rect(initial_x + 5, initial_y + 5, new_width - 10, new_height - 10)
+        enemy_rect = pygame.Rect(initial_x + 6, initial_y + 6, new_width - 12, new_height - 12)
         direction = random.choice(["left", "right", "down"])  # Adjusted directions
         if random_side == "left":
             direction = "right"
@@ -125,8 +127,25 @@ def reset_game_state():
     player_rect.center = (width // 2, height // 2)
     enemy_instances = []
     for i in range(5):
-        for _ in range(2):
-            random_side = random.choice(["left", "right", "top"])
+        enemy_image = pygame.image.load(f"imgs/enemy{i + 1}.png")
+        # Calculate width and height while maintaining the aspect ratio
+        aspect_ratio = enemy_image.get_width() / enemy_image.get_height()
+        # Adjust the desired width
+        if (i==2):
+            new_width = 200
+        elif(i==3):
+            new_width = 130
+        elif (i==4):
+            new_width = 170
+        else:
+            new_width = 75
+        new_height = int(new_width / aspect_ratio)
+        enemy_image = pygame.transform.scale(enemy_image, (new_width, new_height))
+        enemy_images.append(enemy_image)
+        # Generate multiple instances of each enemy with initial positions only at the edges
+        # Generate multiple instances of each enemy with initial positions only at the edges
+        for _ in range(2):  # Adjust the number of instances as needed
+            random_side = random.choice(["left", "right", "top"])  # Restrict to top, left, or right
             if random_side == "left":
                 initial_x = 0 - new_width
                 initial_y = random.randint(0, height - new_height)
@@ -136,13 +155,14 @@ def reset_game_state():
             else:  # top
                 initial_x = random.randint(0, width - new_width)
                 initial_y = 0 - new_height
-            enemy_rect = pygame.Rect(initial_x + 5, initial_y + 5, new_width - 10, new_height - 10)
-            direction = random.choice(["left", "right", "down"])
+            # Adjust the dimensions of the enemy_rect to be slightly smaller
+            enemy_rect = pygame.Rect(initial_x + 6, initial_y + 6, new_width - 12, new_height - 12)
+            direction = random.choice(["left", "right", "down"])  # Adjusted directions
             if random_side == "left":
                 direction = "right"
             elif random_side == "right":
                 direction = "left"
-            enemy_instances.append((enemy_images[i], enemy_rect, direction))
+            enemy_instances.append((enemy_image, enemy_rect, direction))
 
 # Start screen function
 def start_screen():
@@ -248,6 +268,21 @@ while running:
     
     # Render objects
     window.fill((255, 255, 255))  # White background
+
+    # Draw the player with a border
+    pygame.draw.rect(window, (0, 0, 0), player_rect, 2)  # Draw border
+    window.blit(player_image_original, player_rect)  # Draw the player image
+
+    # Draw enemies with a border
+    for enemy_image, enemy_rect, _ in enemy_instances:
+        pygame.draw.rect(window, (0, 0, 0), enemy_rect, 2)  # Draw border
+        window.blit(enemy_image, enemy_rect)  # Draw the enemy image
+
+    # Calculate elapsed time
+    elapsed_time = time.time() - start_time
+
+    # Render objects
+    window.fill((255, 255, 255))  # White background
     window.blit(player_image_original, player_rect)  # Draw the player onto the window
     for enemy_image, enemy_rect, _ in enemy_instances:
         window.blit(enemy_image, enemy_rect)  # Draw enemies onto the window
@@ -278,9 +313,8 @@ while running:
     # Blit the text onto the red background
     window.blit(text_surface, (text_rect.left + border_width, text_rect.top + border_width))
 
-
-
     pygame.display.flip()  # Update the display
+
 
 # Clean up
 pygame.quit()
